@@ -7,7 +7,7 @@ namespace FinalApp.Services
     public class UserService
     {
         private List<User> _users = new List<User>();
-        private const string DataFilePath = @"E:\dev\\c#\FinalApp\FinalApp\bin\Debug\net8.0\Data.json";
+        private const string DataFilePath = @"E:\dev\c#\FinalApp\FinalApp\bin\Debug\net8.0\Data.json";
         private static int _nextAccountNumberCounter = 1;
 
         public UserService()
@@ -25,12 +25,16 @@ namespace FinalApp.Services
         {
             try
             {
-                string json = File.ReadAllText(DataFilePath);
-                var loadedUsers = JsonSerializer.Deserialize<List<User>>(json);
-                if (loadedUsers != null)
+                if (File.Exists(DataFilePath))
                 {
-                    _users = loadedUsers;
+                    string json = File.ReadAllText(DataFilePath);
+                    var loadedUsers = JsonSerializer.Deserialize<List<User>>(json);
+                    if (loadedUsers != null)
+                    {
+                        _users = loadedUsers;
+                    }
                 }
+                    
             }
             catch (FileNotFoundException)
             {

@@ -38,6 +38,7 @@ namespace FinalApp
                         Login();
                         break;
                     case "3":
+                        Console.WriteLine("Exiting the application. Goodbye!");
                         return;
                     default:
                         Console.WriteLine("Invalid choice.");
@@ -76,11 +77,16 @@ namespace FinalApp
 
                 if (currentUser != null)
                 {
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine($"\nWelcome, {currentUser.Username}!");
+                    Console.ResetColor();
                     MainMenu(currentUser);
                 }
                 else
                 {
-                    Console.WriteLine("Incorrect Username or Password.");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Incorrect Username or Password. Try again!");
+                    Console.ResetColor();
                 }
             }
             else
@@ -94,7 +100,7 @@ namespace FinalApp
             while (true)
             {
                 Console.WriteLine("\nChoose operation:");
-                Console.WriteLine("1. Deposit to own account");
+                Console.WriteLine("\n1. Deposit to own account");
                 Console.WriteLine("2. Transfer to other account");
                 Console.WriteLine("3. Withdraw from own account");
                 Console.WriteLine("4. Logout");
@@ -113,9 +119,10 @@ namespace FinalApp
                         WithdrawFromOwnAccount(currentUser);
                         break;
                     case "4":
+                        Console.WriteLine("Logged out successfully.\n");
                         return;
                     default:
-                        Console.WriteLine("Invalid choice.");
+                        Console.WriteLine("Invalid choice. Try again!");
                         break;
                 }
             }
@@ -132,7 +139,7 @@ namespace FinalApp
             Console.WriteLine("Choose account to deposit to:");
             for (int i = 0; i < user.Accounts.Count; i++)
             {
-                Console.WriteLine($"{i + 1}. {user.Accounts[i].AccountNumber} (Balance: {user.Accounts[i].Balance})");
+                Console.WriteLine($"{i + 1}. {user.Accounts[i].AccountNumber} (Balance: {user.Accounts[i].Balance})GEL");
             }
 
             if (int.TryParse(Console.ReadLine(), out int accountIndex) && accountIndex > 0 && accountIndex <= user.Accounts.Count)
@@ -157,14 +164,17 @@ namespace FinalApp
         {
             if (!sender.Accounts.Any())
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("No bank accounts found for this user.");
+                Console.ResetColor();
                 return;
             }
-
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("Choose account to transfer from:");
+            Console.ResetColor();
             for (int i = 0; i < sender.Accounts.Count; i++)
             {
-                Console.WriteLine($"{i + 1}. {sender.Accounts[i].AccountNumber} (Balance: {sender.Accounts[i].Balance})");
+                Console.WriteLine($"{i + 1}. {sender.Accounts[i].AccountNumber} (Balance: {sender.Accounts[i].Balance})GEL");
             }
 
             if (int.TryParse(Console.ReadLine(), out int senderAccountIndex) && senderAccountIndex > 0 && senderAccountIndex <= sender.Accounts.Count)
@@ -174,7 +184,9 @@ namespace FinalApp
 
                 if (string.IsNullOrEmpty(receiverUsername))
                 {
-                    Console.WriteLine("Recipient username cannot be empty.");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Recipient username cannot be empty. Enter username");
+                    Console.ResetColor();
                     return;
                 }
 
@@ -233,7 +245,7 @@ namespace FinalApp
             Console.WriteLine("Choose account to withdraw from:");
             for (int i = 0; i < user.Accounts.Count; i++)
             {
-                Console.WriteLine($"{i + 1}. {user.Accounts[i].AccountNumber} (Balance: {user.Accounts[i].Balance})");
+                Console.WriteLine($"{i + 1}. {user.Accounts[i].AccountNumber} (Balance: {user.Accounts[i].Balance})GEL");
             }
 
             if (int.TryParse(Console.ReadLine(), out int accountIndex) && accountIndex > 0 && accountIndex <= user.Accounts.Count)
