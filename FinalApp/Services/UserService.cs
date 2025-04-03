@@ -26,7 +26,11 @@ namespace FinalApp.Services
             try
             {
                 string json = File.ReadAllText(DataFilePath);
-                _users = JsonSerializer.Deserialize<List<User>>(json);
+                var loadedUsers = JsonSerializer.Deserialize<List<User>>(json);
+                if (loadedUsers != null)
+                {
+                    _users = loadedUsers;
+                }
             }
             catch (FileNotFoundException)
             {
@@ -64,12 +68,12 @@ namespace FinalApp.Services
             Console.WriteLine("\nDo you want to perform another operation?");
         }
 
-        public User Login(string username, string password)
+        public User? Login(string username, string password)
         {
             return _users.FirstOrDefault(u => u.Username == username && u.Password == password);
         }
 
-        public User FindUser(string username)
+        public User? FindUser(string username)
         {
             return _users.FirstOrDefault(u => u.Username == username);
         }

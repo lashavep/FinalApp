@@ -27,7 +27,7 @@ namespace FinalApp
                 Console.WriteLine("2. Login");
                 Console.WriteLine("3. Exit");
 
-                string choice = Console.ReadLine();
+                string? choice = Console.ReadLine();
 
                 switch (choice)
                 {
@@ -49,29 +49,43 @@ namespace FinalApp
         private void Register()
         {
             Console.Write("Username: ");
-            string username = Console.ReadLine();
+            string? username = Console.ReadLine();
             Console.Write("Password: ");
-            string password = Console.ReadLine();
+            string? password = Console.ReadLine();
 
-            _userService.Register(username, password);
+            if (username != null && password != null)
+            {
+                _userService.Register(username, password);
+            }
+            else
+            {
+                Console.WriteLine("Username and password cannot be empty.");
+            }
         }
 
         private void Login()
         {
             Console.Write("Username: ");
-            string username = Console.ReadLine();
+            string? username = Console.ReadLine();
             Console.Write("Password: ");
-            string password = Console.ReadLine();
+            string? password = Console.ReadLine();
 
-            User currentUser = _userService.Login(username, password);
-
-            if (currentUser != null)
+            if (username != null && password != null)
             {
-                MainMenu(currentUser);
+                User? currentUser = _userService.Login(username, password);
+
+                if (currentUser != null)
+                {
+                    MainMenu(currentUser);
+                }
+                else
+                {
+                    Console.WriteLine("Incorrect Username or Password.");
+                }
             }
             else
             {
-                Console.WriteLine("Incorrect Username or Password.");
+                Console.WriteLine("Username and password cannot be empty.");
             }
         }
 
@@ -85,7 +99,7 @@ namespace FinalApp
                 Console.WriteLine("3. Withdraw from own account");
                 Console.WriteLine("4. Logout");
 
-                string choice = Console.ReadLine();
+                string? choice = Console.ReadLine();
 
                 switch (choice)
                 {
@@ -156,8 +170,15 @@ namespace FinalApp
             if (int.TryParse(Console.ReadLine(), out int senderAccountIndex) && senderAccountIndex > 0 && senderAccountIndex <= sender.Accounts.Count)
             {
                 Console.Write("Enter recipient's Username: ");
-                string receiverUsername = Console.ReadLine();
-                User receiver = _userService.FindUser(receiverUsername);
+                string? receiverUsername = Console.ReadLine();
+
+                if (string.IsNullOrEmpty(receiverUsername))
+                {
+                    Console.WriteLine("Recipient username cannot be empty.");
+                    return;
+                }
+
+                User? receiver = _userService.FindUser(receiverUsername);
 
                 if (receiver != null)
                 {
