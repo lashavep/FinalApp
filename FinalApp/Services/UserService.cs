@@ -1,6 +1,7 @@
 ﻿
 using System.Text.Json;
 using FinalApp.Models;
+using Spectre.Console;
 
 namespace FinalApp.Services
 {
@@ -64,6 +65,8 @@ namespace FinalApp.Services
             newUser.Accounts.Add(new BankAccount($"GE{_nextAccountNumberCounter++:D3}", 100.00M)); 
             newUser.Accounts.Add(new BankAccount($"GE{_nextAccountNumberCounter++:D3}", 50.00M));
 
+            Console.Clear();
+            PrintHeader();
             _users.Add(newUser);
             SaveData();
             Console.ForegroundColor = ConsoleColor.Green;
@@ -85,6 +88,34 @@ namespace FinalApp.Services
         public List<User> GetUsers()
         {
             return _users;
+        }
+
+        public void DeleteUser(string username)
+        {
+            var userToDelete = _users.FirstOrDefault(u => u.Username == username);
+            if (userToDelete != null)
+            {
+                Console.Clear();
+                PrintHeader();
+                _users.Remove(userToDelete);
+                SaveData();
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("User deleted successfully.");
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("User not found.");
+                Console.ResetColor();
+            }
+        }
+
+        public void PrintHeader()
+        {
+            AnsiConsole.Write(new FigletText("ATM-Bank").Centered().Color(Color.Yellow));
+            var line = new Text("\n=========================================\n\n\n").Centered();
+            AnsiConsole.Write(line);
         }
     }
 }

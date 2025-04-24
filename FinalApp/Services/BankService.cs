@@ -1,5 +1,6 @@
 ﻿
 using FinalApp.Models;
+using Spectre.Console;
 
 namespace FinalApp.Services
 {
@@ -14,11 +15,14 @@ namespace FinalApp.Services
 
         public void DepositToOwnAccount(User user, int accountIndex, decimal amount)
         {
+            Console.Clear();
+            PrintHeader();
             user.Accounts[accountIndex].Balance += amount;
             _userService.GetUsers().Find(x => x.Username == user.Username)!.Accounts[accountIndex].Balance = user.Accounts[accountIndex].Balance;
             _userService.SaveData();
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"\nAmount deposited successfully. Your balance is {user.Accounts[accountIndex].Balance}\n");
+            Console.WriteLine("=================\n");
             Console.ResetColor();
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("Do you want to perform another operation?");
@@ -27,6 +31,8 @@ namespace FinalApp.Services
 
         public void TransferToOtherAccount(User sender, int senderAccountIndex, User receiver, int receiverAccountIndex, decimal amount)
         {
+            Console.Clear();
+            PrintHeader();
             if (sender.Accounts[senderAccountIndex].Balance < amount)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -45,6 +51,7 @@ namespace FinalApp.Services
             _userService.SaveData();
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"Transfer successful. Your balance is {sender.Accounts[senderAccountIndex].Balance} GEL");
+            Console.WriteLine("=================\n");
             Console.ResetColor();
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("\nDo you want to perform another operation?");
@@ -53,6 +60,8 @@ namespace FinalApp.Services
 
         public void WithdrawFromOwnAccount(User user, int accountIndex, decimal amount)
         {
+            Console.Clear();
+            PrintHeader();
             if (user.Accounts[accountIndex].Balance < amount)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -69,10 +78,18 @@ namespace FinalApp.Services
             _userService.SaveData();
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"Withdrawal successful. Your balance is {user.Accounts[accountIndex].Balance}  GEL");
+            Console.WriteLine("=================\n");
             Console.ResetColor();
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("\nDo you want to perform another operation?");
             Console.ResetColor();
+        }
+
+        public void PrintHeader()
+        {
+            AnsiConsole.Write(new FigletText("ATM-Bank").Centered().Color(Color.Yellow));
+            var line = new Text("\n=========================================\n\n\n").Centered();
+            AnsiConsole.Write(line);
         }
     }
 }

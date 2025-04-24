@@ -1,6 +1,8 @@
 ﻿
 using FinalApp.Models;
 using FinalApp.Services;
+using Spectre.Console;
+
 
 namespace FinalApp
 {
@@ -17,12 +19,15 @@ namespace FinalApp
 
         public void Run()
         {
+
             while (true)
             {
+
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("\n1. Register");
                 Console.WriteLine("2. Login");
-                Console.WriteLine("3. Exit\n");
+                Console.WriteLine("3. delete user");
+                Console.WriteLine("4. Exit\n");
                 Console.ResetColor();
 
                 string? choice = Console.ReadLine();
@@ -36,6 +41,9 @@ namespace FinalApp
                         Login();
                         break;
                     case "3":
+                        DeleteUser();
+                        break;
+                    case "4":
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("Exiting the application. Goodbye!");
                         Console.ResetColor();
@@ -68,8 +76,21 @@ namespace FinalApp
             }
         }
 
-        private void Login()
+        private void WriteCentered(string text)
         {
+            int windowWidth = Console.WindowWidth;
+            int textLength = text.Length;
+            int leftPadding = (windowWidth - textLength) / 2;
+
+            if (leftPadding > 0)
+                Console.WriteLine(new string(' ', leftPadding) + text);
+            else
+                Console.WriteLine(text);
+        }
+
+        public User? Login()
+        {
+            
             Console.Write("Username: ");
             string? username = Console.ReadLine();
             Console.Write("Password: ");
@@ -81,14 +102,22 @@ namespace FinalApp
 
                 if (currentUser != null)
                 {
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    Console.WriteLine($"\nWelcome, {currentUser.Username}! Your accounts:\n");
+                    Console.Clear();
+                    PrintHeader();
+                    WriteCentered("========================================");
+                    WriteCentered($"Welcome, {currentUser.Username}!");
+                    WriteCentered("Your accounts:");
+                    WriteCentered("========================================");
+                    Console.WriteLine();
+
                     foreach (var account in currentUser.Accounts)
                     {
-                        Console.WriteLine($"- Account Number: {account.AccountNumber}, Balance: {account.Balance} GEL");
+                        WriteCentered($"- Account Number: {account.AccountNumber}, Balance: {account.Balance} GEL");
                     }
+
                     Console.ResetColor();
                     MainMenu(currentUser);
+                    return currentUser;
                 }
                 else
                 {
@@ -103,7 +132,10 @@ namespace FinalApp
                 Console.WriteLine("Username and password cannot be empty.");
                 Console.ResetColor();
             }
+
+            return null;
         }
+
 
         private void MainMenu(User currentUser)
         {
@@ -260,7 +292,7 @@ namespace FinalApp
             }
             else
             {
-                Console.ForegroundColor= ConsoleColor.Red;
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Invalid sender account choice.");
                 Console.ResetColor();
             }
@@ -270,7 +302,7 @@ namespace FinalApp
         {
             if (!user.Accounts.Any())
             {
-                Console.ForegroundColor=ConsoleColor.Red;
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("No bank accounts found for this user.");
                 Console.ResetColor();
                 return;
@@ -291,7 +323,7 @@ namespace FinalApp
                 }
                 else
                 {
-                    Console.ForegroundColor=ConsoleColor.Red;
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Invalid amount.");
                     Console.ResetColor();
                 }
@@ -302,6 +334,36 @@ namespace FinalApp
                 Console.WriteLine("Invalid account choice.");
                 Console.ResetColor();
             }
+        }
+
+        private void DeleteUser()
+        {
+            Console.Write("Enter the username of the user to delete: ");
+            string? username = Console.ReadLine();
+
+            if (!string.IsNullOrEmpty(username))
+            {
+                User? userToDelete = _userService.FindUser(username);
+                if (userToDelete != null)
+                {
+                    _userService.DeleteUser(username); 
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"User '{username}' deleted successfully.");
+                    Console.ResetColor();
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"User '{username}' not found. Try again!");
+                    Console.ResetColor();
+                }
+            }
+        }
+        public void PrintHeader()
+        {
+            AnsiConsole.Write(new FigletText("ATM-Bank").Centered().Color(Color.Yellow));
+            var line = new Text("\n=========================================\n\n\n").Centered();
+            AnsiConsole.Write(line);
         }
     }
 }
